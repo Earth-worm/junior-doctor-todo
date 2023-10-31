@@ -1,0 +1,376 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body onload="reload()">
+        <div id="task-detail-modal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center w-full p-4 overflow-x-hidden overflow-y-auto bg-black bg-opacity-50 md:inset-0 hidden">
+            <div class="relative w-full max-w-md max-h-full">
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    <button type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" onClick="closeDetailModal()">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                    <div id="task-detail-loading" role="status" class="px-6 py-6 lg:px-8 flex justify-center">
+                        <svg class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-teal-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                        </svg>
+                    </div> 
+                    <div id="task-detail-contents" aria-hidden="true" class="px-6 py-6 lg:px-8 hidden">
+                        <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Task Detail</h3>
+                        <form class="space-y-6" action="#">
+                            <div>
+                                <label for="id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ID</label>
+                                <input type="text" name="id" id="id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Todo ID" disabled>
+                            </div>
+                            <div>
+                                <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
+                                <input type="text" name="title" id="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Enter title" required>
+                            </div>
+                            <div>
+                                <label for="deadline" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deadline</label>
+                                <input type="date" name="deadline" id="deadline" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                            </div>
+                            <div class="flex items-start">
+                                <input id="isCompleted" type="checkbox" name="isCompleted" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-teal-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800">
+                                <label for="isCompleted" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Completed</label>
+                            </div>
+                            <button type="button" class="w-full text-white bg-teal-700 hover:bg-teal-800 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-teal-600 dark:hover-bg-teal-700 dark:focus:ring-teal-800" onclick="updateTask()">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <div id="alert-list" class="fixed top-8 right-8 flex flex-col justify-start"></div>
+        <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-16">
+            <div class="px-4 py-2">
+                <h1 class="text-gray-800 font-bold text-2xl uppercase">TODO List</h1>
+            </div>
+            <form class="group w-full max-w-sm mx-auto px-4 py-2" onsubmit="addTask();return false;">
+                <div class="flex items-center border-b-2 border-teal-500 py-2">
+                    <input
+                        id="task-name"
+                        class="bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+                        type="text" placeholder="Add a task">
+                    <button
+                        class="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
+                        type="submit"
+                        >
+                        <div id="add-task-add-button">
+                            Add
+                        </div>
+                        <div id="add-task-loading-button" class="hidden">
+                            <svg aria-hidden="true" role="status" class="inline mr-2 w-4 h-4 text-gray-200 animate-spin dark:text-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="white"></path>
+                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="#1C64F2"></path>
+                            </svg>
+                            Loading...
+                        </div>
+                    </button>
+                </div>
+            </form>
+            <ul class="divide-y divide-gray-200 px-4" id="task-list"></ul>
+            <div role="status" class="px-4 py-2 flex justify-center">
+                <svg id="task-list-loading" class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-teal-600 hidden" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                </svg>
+            </div>
+        </div>
+        <script>
+            async function reload(){
+                visiableElement("task-list-loading")
+                unvisiableElement("task-list")
+                try{
+                    const res = await fetch(
+                        "<?= URL ?>",
+                        {
+                            method: 'POST',
+                            mode: 'cors',
+                            body: JSON.stringify({
+                            jsonrpc : "2.0",
+                            method: 'getTaskList',
+                        }),
+                    })
+                    const jsonRes = await res.json()
+                    if(jsonRes.error){
+                        throw new Error(JSON.stringify(jsonRes))
+                    }
+                    clearTaskElement()
+                    const tasks = jsonRes.result
+                    for(var task of tasks){
+                        addTaskElement(task)
+                    }
+                }catch(e){
+                    addAlertMessage("タスクリスト読み込み時にエラーが発生しました")
+                    console.error(e)
+                }
+                unvisiableElement("task-list-loading")
+                visiableElement("task-list")
+            }
+
+            async function addTask(){
+                const title = document.getElementById("task-name").value
+                if(title === ""){
+                    addAlertMessage("タスク名入力されていません")
+                    return
+                }
+                unvisiableElement("add-task-add-button")
+                visiableElement("add-task-loading-button")
+                try{
+                    const resp = await fetch(
+                        "<?= URL ?>",
+                        {
+                            method: 'POST',
+                            mode: 'cors',
+                            body: JSON.stringify({
+                            jsonrpc : "2.0",
+                            method: 'addTask',
+                            params:{"title":title},
+                        }),
+                    });
+                    const jsonResp = await resp.json()
+                    if(jsonResp.error){
+                        throw new Error(JSON.stringify(jsonRes))
+                    }
+                    await reload()
+                    addInfoMessage(`新規タスク「${title}」を作成しました`)
+                    document.getElementById("task-name").value = ""
+                }catch(e){
+                    addAlertMessage("新規作成中にエラーが発生しました")
+                    console.error(e)
+                }
+                unvisiableElement("add-task-loading-button")
+                visiableElement("add-task-add-button")
+            }
+
+            async function removeTask(element,id){
+                visiableElement("task-list-loading")
+                unvisiableElement("task-list")
+                try{
+                    const resp = await fetch(
+                        "<?= URL ?>",
+                        {
+                            method: 'POST',
+                            mode: 'cors',
+                            body: JSON.stringify({
+                            jsonrpc : "2.0",
+                            method: 'deleteTask',
+                            params:{ "id" : id },
+                        }),
+                    });
+                    const jsonResp = await resp.json()
+                    if(jsonResp.error){
+                        throw new Error(JSON.stringify(jsonRes))
+                    }
+                    const task = jsonResp.result
+                    element.parentElement.parentElement.parentElement.parentElement.remove()
+                    addInfoMessage(`「${task.title}」を削除しました`)
+                }catch(e){
+                    addAlertMessage("タスク削除中にエラーが発生しました")
+                    console.error(e)
+                }
+                unvisiableElement("task-list-loading")
+                visiableElement("task-list")
+            }
+
+            async function openDetailModal(id){
+                visiableElement("task-detail-modal")
+                visiableElement("task-detail-loading")
+                unvisiableElement("task-detail-contents")
+                try{
+                    const resp = await fetch(
+                        "<?= URL ?>",
+                        {
+                            method: 'POST',
+                            mode: 'cors',
+                            body: JSON.stringify({
+                            jsonrpc : "2.0",
+                            method: 'getTask',
+                            params:{"id":id},
+                        }),
+                    });
+                    const jsonResp = await resp.json()
+                    if(jsonResp.error){
+                        throw new Error(JSON.stringify(jsonRes))
+                    }
+                    const task = jsonResp.result
+                    setTaskDetailModalValues(task.id,task.title,datePickerFormDateFormat(task.deadline),task.isCompleted)
+                }catch(e){
+                    addAlertMessage("タスク情報取得中にエラーが発生しました")
+                    console.error(e)
+                    closeDetailModal()
+                }
+                unvisiableElement("task-detail-loading")
+                visiableElement("task-detail-contents")
+            }
+
+            async function updateTask(){
+                visiableElement("task-detail-loading")
+                unvisiableElement("task-detail-contents")
+                try{
+                    const id = document.getElementById('id').value
+                    const title = document.getElementById('title').value
+                    const deadline = document.getElementById('deadline').value
+                    const isCompleted = document.getElementById('isCompleted').checked
+                    const resp = await fetch(
+                        "<?= URL ?>",
+                        {
+                            method: 'POST',
+                            mode: 'cors',
+                            body: JSON.stringify({
+                            jsonrpc : "2.0",
+                            method: 'updateTask',
+                            params:{
+                                "id":id,
+                                "title":title,
+                                "deadline":deadline,
+                                "isCompleted":isCompleted,
+                            },
+                        }),
+                    });
+                    const jsonResp = await resp.json()
+                    if(jsonResp.error){
+                        throw new Error(JSON.stringify(jsonRes))
+                    }
+                    await reload()
+                    addInfoMessage(`「${title}」を更新しました。`)
+                }catch(e){
+                    addAlertMessage("タスク更新中にエラーが発生しました")
+                    console.error(e)
+                    closeDetailModal()
+                }
+                unvisiableElement("task-detail-loading")
+                visiableElement("task-detail-contents")
+                closeDetailModal()
+            }
+
+            function closeDetailModal(){
+                unvisiableElement("task-detail-modal")
+                clearTaskDetailModalValues()
+            }
+
+            function setTaskDetailModalValues(id,title,deadline,isCompleted){
+                document.getElementById('id').value = id
+                document.getElementById('title').value = title
+                document.getElementById('deadline').value = deadline
+                document.getElementById('isCompleted').checked = isCompleted
+            }
+
+            function clearTaskDetailModalValues(){
+                setTaskDetailModalValues("","","",false)
+            }
+
+            function clearTaskElement(){
+                const taskList = document.getElementById('task-list');
+                while( taskList.firstChild ){
+                    taskList.removeChild( taskList.firstChild );
+                }
+            }
+
+            function addTaskElement(task){
+                const taskList = document.getElementById('task-list');
+                taskList.insertAdjacentHTML('beforeend', 
+                `
+                <li class="py-4">
+                    <div class="flex flex-row">
+                        <div class="basis-3/5"><p class="text-lg font-medium text-center ${task.isCompleted ? "line-through" : ""}">${task.title}</p></div>
+                        <div class="basis-1/5"><p class="text-lg font-light text-gray-500 text-center">${outDateFormat(task.deadline)}</p></div>
+                        <div class="basis-1/5 flex flex-row justify-end">
+                            <div class="group">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="gray" class="w-6 h-6 group-hover:stroke-gray-300 cursor-pointer"  onclick="openDetailModal('${task.id}')">
+                                    <path 
+                                        stroke-linecap="round" 
+                                        stroke-linejoin="round" 
+                                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" 
+                                    />
+                                </svg>
+                            </div>
+                            <div class="group">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="w-6 h-6 group-hover:stroke-red-300 cursor-pointer" onclick="removeTask(this,'${task.id}')">
+                                    <path 
+                                    stroke-linecap="round" 
+                                    stroke-linejoin="round" 
+                                    d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" 
+                                    />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                `
+                );
+            }
+
+            //dateString: 2023-10-23T15:00:00.000Z
+            function outDateFormat(dateString){
+                if(!dateString)return "未設定"
+                const d = new Date(dateString)
+                if(!d) return
+                return d.toLocaleDateString()
+            }
+
+            // YYYY-MM-DD形式の日付文字列を戻す
+            function datePickerFormDateFormat(dateString){
+                if(!dateString)return ""
+                const d = new Date(dateString)
+                if(!d) return ""
+                return d.toLocaleDateString('sv-SE')
+            }
+
+            // ロード画面
+            function visiableElement(id){
+                document.getElementById(id).classList.remove("hidden")
+            }
+            function unvisiableElement(id){
+                document.getElementById(id).classList.add("hidden")
+            }
+
+            function closeMessage(closeElement){
+                closeElement.parentElement.remove()
+            }
+
+            function addInfoMessage(message){
+                const taskList = document.getElementById('alert-list');
+                taskList.insertAdjacentHTML('beforeend', 
+                `
+                <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-teal-500">
+                    <span class="text-xl inline-block mr-0 align-middle">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
+                        </svg>
+                    </span>
+                    <span class="inline-block align-middle mr-8">
+                        <b class="capitalize mr-2">Info</b>${message}
+                    </span>
+                    <button class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none" onclick="closeMessage(this)"><span>×</span></button>
+                </div>
+                `
+                );
+            }
+            function addAlertMessage(message){
+                const taskList = document.getElementById('alert-list');
+                taskList.insertAdjacentHTML('beforeend', 
+                `
+                <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-red-400">
+                    <span class="text-xl inline-block mr-0 align-middle">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
+                        </svg>
+                    </span>
+                    <span class="inline-block align-middle mr-8">
+                        <b class="capitalize mr-2">Error</b>${message}
+                    </span>
+                    <button class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none" onclick="closeMessage(this)"><span>×</span></button>
+                </div>
+                `
+                );
+            }
+        </script>
+    </body>
+</html>
