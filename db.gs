@@ -1,7 +1,3 @@
-function test(){
-  deleteItem("H2Hmqg4N")
-}
-
 // itemを追加
 function createItem(title,deadline){
   var sheetName = "task";

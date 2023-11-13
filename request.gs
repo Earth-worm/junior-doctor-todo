@@ -1,8 +1,10 @@
 function doGet(){
   const template = HtmlService.createTemplateFromFile("index.html")
-  template.URL = ScriptApp.getService().getUrl()
+  //template.URL = ScriptApp.getService().getUrl()
+  template.URL = "https://script.google.com/macros/s/AKfycbznGNmO-E4o1d0opxqQDaubjCedU3gK-_mJM45B9ZDhvcVumD-mRGNH1EBtVeRRTdv_/exec"
   return template.evaluate();
 }
+
 
 function doPost(request){
   log(request)
