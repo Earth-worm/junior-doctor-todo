@@ -1,7 +1,14 @@
+const spreadSheetID = "1goKlICYi7ZINZ3cdfkPke2IHGCRR8LS2sxCh9oh20v4"
+const sheetName = "task"
+
+function testItem(){
+  createItem("title","deadline")
+}
+
+
 // itemを追加
 function createItem(title,deadline){
-  var sheetName = "task";
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  var sheet = SpreadsheetApp.openById(spreadSheetID).getSheetByName(sheetName);
   var lastRow = sheet.getLastRow();
   var newRow = lastRow + 1;
   var id = generateRandomString(8);
@@ -20,8 +27,7 @@ function createItem(title,deadline){
 
 // itemを更新
 function updateItem(id,title,deadline,isCompleted){
-  var sheetName = "task";
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  var sheet = SpreadsheetApp.openById(spreadSheetID).getSheetByName(sheetName);
   var values = sheet.getDataRange().getValues();
 
   for (var i = 1; i < values.length; i++) {
@@ -35,8 +41,7 @@ function updateItem(id,title,deadline,isCompleted){
 
 // item一覧を取得
 function getItems(){
-  var sheetName = "task";
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  var sheet = SpreadsheetApp.openById(spreadSheetID).getSheetByName(sheetName);
   var values = sheet.getDataRange().getValues();
   var items = [];
 
@@ -54,8 +59,7 @@ function getItems(){
 
 // itemを取得
 function getOneItem(id){
-  var sheetName = "task";
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  var sheet = SpreadsheetApp.openById(spreadSheetID).getSheetByName(sheetName);
   var values = sheet.getDataRange().getValues();
 
   for (var i = 1; i < values.length; i++) {
@@ -72,8 +76,7 @@ function getOneItem(id){
 
 // itemを削除
 function deleteItem(id){
-  var sheetName = "task";
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  var sheet = SpreadsheetApp.openById(spreadSheetID).getSheetByName(sheetName);
   var dataRange = sheet.getDataRange();
   var values = dataRange.getValues();
   

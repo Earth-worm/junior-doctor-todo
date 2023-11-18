@@ -20,8 +20,7 @@ function doPost(request){
 }
 
 function log(request){
-  var sheetName = "log";
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  var sheet = SpreadsheetApp.openById(spreadSheetID).getSheetByName("log");
   var lastRow = sheet.getLastRow();
   var newRow = lastRow + 1;
   var today = new Date();
